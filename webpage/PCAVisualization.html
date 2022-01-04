@@ -1,0 +1,111 @@
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoencoder</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <style> body {padding: 0; margin: 0;} </style>
+    <script src="chart.js"></script>
+
+  </head>
+
+  <body> <!--onload="run()"-->
+    <div className="chartjs-wrapper" ><canvas id="latentSpace" className="chartjs" width="800" height="800" style="border:1px solid"></canvas></div>
+    <script>
+      const JSONSave = require('../SaveJSONObj.js');
+      //const ipc = require('electron').ipcRenderer;
+
+
+      var graphData;
+      var chart;
+
+      window.onload = new function(){
+        //loadSavedPCANumbers();
+        loadSavedPCALetters();
+
+        var ctx = document.getElementById('latentSpace').getContext('2d');
+        chart = new Chart(ctx, {
+          // The type of chart we want to create
+          type: 'scatter',
+          // The data for our dataset
+          data: {
+            datasets: graphData
+          },
+
+          // Configuration options go here
+          options: {
+              maintainAspectRatio: true,
+              responsive: false,
+              scales: {
+                  xAxes: [{
+                      //type: 'linear',
+                      position: 'bottom',
+                      display: true,
+                  }],
+                  yAxes: [{
+                      //type: 'linear',
+                      display: true,
+                  }]
+              }
+          }
+        });
+        window.myLine = chart;
+      }
+
+      function loadSavedPCALetters(){
+        graphData  = [{label: 'A', backgroundColor: 'rgb(240,163,255)', borderColor: 'rgb(240,163,255)', data: []},
+                          {label: 'B', backgroundColor: 'rgb(0,117,220)', borderColor: 'rgb(0,117,220)', data: []},
+                          {label: 'C', backgroundColor: 'rgb(153,63,0)', borderColor: 'rgb(153,63,0)', data: []},
+                          {label: 'D', backgroundColor: 'rgb(76,0,92)', borderColor: 'rgb(76,0,92)', data: []},
+                          {label: 'E', backgroundColor: 'rgb(25,25,25)', borderColor: 'rgb(25,25,25)', data: []},
+                          {label: 'F', backgroundColor: 'rgb(0,92,49)', borderColor: 'rgb(0,92,49)', data: []},
+                          {label: 'G', backgroundColor: 'rgb(43,206,72)', borderColor: 'rgb(43,206,72)', data: []},
+                          {label: 'H', backgroundColor: 'rgb(255,204,153)', borderColor: 'rgb(255,204,153)', data: []},
+                          {label: 'I', backgroundColor: 'rgb(128,128,128)', borderColor: 'rgb(128,128,128)', data: []},
+                          {label: 'J', backgroundColor: 'rgb(148,255,181)', borderColor: 'rgb(148,255,181)', data: []},
+                          {label: 'K', backgroundColor: 'rgb(143,124,0)', borderColor: 'rgb(143,124,0)', data: []},
+                          {label: 'L', backgroundColor: 'rgb(157,204,0)', borderColor: 'rgb(157,204,0)', data: []},
+                          {label: 'M', backgroundColor: 'rgb(194,0,136)', borderColor: 'rgb(194,0,136)', data: []},
+                          {label: 'N', backgroundColor: 'rgb(0,51,128)', borderColor: 'rgb(0,51,128)', data: []},
+                          {label: 'O', backgroundColor: 'rgb(255,164,5)', borderColor: 'rgb(255,164,5)', data: []},
+                          {label: 'P', backgroundColor: 'rgb(255,168,187)', borderColor: 'rgb(255,168,187)', data: []},
+                          {label: 'Q', backgroundColor: 'rgb(66,102,0)', borderColor: 'rgb(66,102,0)', data: []},
+                          {label: 'R', backgroundColor: 'rgb(255,0,16)', borderColor: 'rgb(255,0,16)', data: []},
+                          {label: 'S', backgroundColor: 'rgb(94,241,242)', borderColor: 'rgb(94,241,242)', data: []},
+                          {label: 'T', backgroundColor: 'rgb(0,153,143)', borderColor: 'rgb(0,153,143)', data: []},
+                          {label: 'U', backgroundColor: 'rgb(224,255,102)', borderColor: 'rgb(224,255,102)', data: []},
+                          {label: 'V', backgroundColor: 'rgb(116,10,255)', borderColor: 'rgb(116,10,255)', data: []},
+                          {label: 'W', backgroundColor: 'rgb(153,0,0)', borderColor: 'rgb(153,0,0)', data: []},
+                          {label: 'X', backgroundColor: 'rgb(255,255,128)', borderColor: 'rgb(255,255,128)', data: []},
+                          {label: 'Y', backgroundColor: 'rgb(255,255,0)', borderColor: 'rgb(255,255,0)', data: []},
+                          {label: 'Z', backgroundColor: 'rgb(255,80,5)', borderColor: 'rgb(255,80,5)', data: []}];
+        let letterData = JSONSave.load('PCA - v6|batch=50|epochs=7|r=0.5|c=15.13');
+        for(let i = 0; i < 26; i++){
+          for(let j = 0; j < letterData[i].length/5; j++){
+            graphData[i].data.push({x: letterData[i][j][0], y: letterData[i][j][1]});
+          }
+        }
+      }
+
+      function loadSavedPCANumbers(){
+        graphData  = [{label: '0', backgroundColor: 'rgb(240,163,255)', borderColor: 'rgb(240,163,255)', data: []},
+                      {label: '1', backgroundColor: 'rgb(0,117,220)', borderColor: 'rgb(0,117,220)', data: []},
+                      {label: '2', backgroundColor: 'rgb(153,63,0)', borderColor: 'rgb(153,63,0)', data: []},
+                      {label: '3', backgroundColor: 'rgb(76,0,92)', borderColor: 'rgb(76,0,92)', data: []},
+                      {label: '4', backgroundColor: 'rgb(25,25,25)', borderColor: 'rgb(25,25,25)', data: []},
+                      {label: '5', backgroundColor: 'rgb(0,92,49)', borderColor: 'rgb(0,92,49)', data: []},
+                      {label: '6', backgroundColor: 'rgb(43,206,72)', borderColor: 'rgb(43,206,72)', data: []},
+                      {label: '7', backgroundColor: 'rgb(255,204,153)', borderColor: 'rgb(255,204,153)', data: []},
+                      {label: '8', backgroundColor: 'rgb(128,128,128)', borderColor: 'rgb(128,128,128)', data: []},
+                      {label: '9', backgroundColor: 'rgb(148,255,181)', borderColor: 'rgb(148,255,181)', data: []}];
+        let numData = JSONSave.load('PCA - Num-v6|batch=50|epochs=6|r=0.6|c=10.81');
+        for(let i = 0; i < 26; i++){
+          for(let j = 0; j < numData[i].length/10; j++){
+            graphData[i].data.push({x: numData[i][j][0], y: numData[i][j][1]});
+          }
+        }
+      }
+
+    </script>
+  </body>
+</html>

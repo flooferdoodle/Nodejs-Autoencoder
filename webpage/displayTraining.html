@@ -1,0 +1,154 @@
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoencoder</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <style> body {padding: 0; margin: 0;} </style>
+    <script src="chart.js"></script>
+
+  </head>
+
+  <body> <!--onload="run()"-->
+    <div className="chartjs-wrapper"><canvas id="costChart" className="chartjs"></canvas></div>
+    <script>
+
+      const ipc = require('electron').ipcRenderer;
+
+
+      var costDataset = {
+        label: 'Cost',
+        backgroundColor: 'rgb(152, 134, 252)',
+        borderColor: 'rgb(152, 134, 252)',
+        data: []
+      };
+      var chart;
+      var lastReq = null;
+
+      window.onload = new function(){
+        var ctx = document.getElementById('costChart').getContext('2d');
+        chart = new Chart(ctx, {
+          // The type of chart we want to create
+          type: 'line',
+
+          // The data for our dataset
+          data: {
+            datasets: [costDataset]
+          },
+
+          // Configuration options go here
+          options: {
+              scales: {
+                  xAxes: [{
+                      type: 'linear',
+                      position: 'bottom',
+                      display: true,
+                      scaleLabel:{
+                        display: true,
+                        labelString: 'Number of trained images'
+                      }
+                  }],
+                  yAxes: [{
+                      type: 'linear',
+                      display: true,
+                      scaleLabel:{
+                        display: true,
+                        labelString: 'Cost'
+                      }
+                  }]
+              }
+          }
+        });
+        window.myLine = chart;
+        requestData();
+      }
+
+      function requestData(){
+        ipc.send('costRequest', null);
+        setTimeout(requestData, 1000);
+      }
+
+      ipc.on('costReply', (event, data) => {
+        //console.log("Recieved data");
+        if(lastReq != JSON.stringify(data)){
+          lastReq = JSON.stringify(data);
+          console.log(data);
+          costDataset.data.push(data);
+          window.myLine.update();
+        }
+      });
+/*
+      var nextButton = document.createElement('button');
+      nextButton.id = "nextButton";
+      nextButton.addEventListener('click', function(){
+        ipc.once('imgReply', function(event, imgData){
+          updateImage(imgData);
+        })
+        ipc.send('imgRequest', null);
+      });
+      nextButton.innerText = "Next Image";*/
+
+/*
+      let margin = [10,10];
+      function updateImage(dataArr){
+        //console.log(imgDim);
+
+        let w = canvas.width/2 - 2*margin[0];
+        let h = canvas.height - 2*margin[1];
+        w /= dataArr[0].dim[0];
+        h /= dataArr[0].dim[1];
+        let size = Math.min(w,h);
+
+        drawImageCircles(dataArr[0].arr,dataArr[0].dim,margin[0],margin[1],size);
+
+        w = canvas.width/2 - 2*margin[0];
+        h = canvas.height - 2*margin[1];
+        w /= dataArr[1].dim[0];
+        h /= dataArr[1].dim[1];
+        size = Math.min(w,h);
+        for(let i = 0; i < dataArr[1].arr.length; i++){
+          dataArr[1].arr[i] = map(dataArr[1].arr[i],0,1,0,255);
+        }
+
+        drawImageCircles(dataArr[1].arr,dataArr[1].dim,margin[0] + canvas.width/2,margin[1],size);
+      }
+      function drawCircleCorner(x, y, d){
+        ctx.beginPath();
+        ctx.arc(x+d/2, y+d/2, d/2, 0, 2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+      }
+      function drawImageCircles(imgArr, imgDim, startx, starty, size){
+        for(let x = 0; x < imgDim[0]; x++){
+          for(let y = 0; y < imgDim[1]; y++){
+            let currColor = 255 - imgArr[x*imgDim[0] + y];
+            ctx.fillStyle = 'rgb(' + currColor + ',' + currColor + ',' + currColor + ')';
+            ctx.strokeStyle = 'rgb(' + currColor + ',' + currColor + ',' + currColor + ')';
+            drawCircleCorner(startx + x*size, starty + y*size, size);
+          }
+        }
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.id = "canvas";
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight - 50;
+      var body = document.getElementsByTagName("body")[0];
+
+      body.appendChild(canvas);
+      body.appendChild(nextButton);
+
+      //canvas.style = "border:1px solid #000000;";
+
+
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "gray";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";*/
+
+      function map(n, start1, stop1, start2, stop2) {
+        return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+      }
+    </script>
+  </body>
+</html>

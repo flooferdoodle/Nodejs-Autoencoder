@@ -1,0 +1,14 @@
+{
+  "name": "Autoencoder",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "electron displayNetwork.js"
+  },
+  "dependencies": {
+    "cli-progress": "^3.9.0",
+    "electron": "^11.2.1",
+    "fs": "^0.0.1-security",
+    "ml-matrix": "^6.6.0"
+  }
+}
